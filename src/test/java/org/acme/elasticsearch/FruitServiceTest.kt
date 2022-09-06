@@ -1,27 +1,30 @@
-package org.acme.elasticsearch;
+package org.acme.elasticsearch
 
-import io.quarkus.test.junit.QuarkusTest;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
-import javax.inject.Inject;
-import java.io.IOException;
-import java.util.List;
+import io.quarkus.test.junit.QuarkusTest
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
+import java.io.IOException
+import java.util.*
+import javax.enterprise.inject.Default
+import javax.inject.Inject
 
 @QuarkusTest
-public class FruitServiceTest {
+internal class FruitServiceTest(){
 
     @Inject
-    FruitService fruitService;
+    @field: Default
+    lateinit var fruitService: FruitService
 
     @Test
-    void testSearch() throws IOException {
-        Fruit fruit = Fruit.builder().color("red").name("strawberry").build();
-        fruitService.index(fruit);
-        List<Fruit> searchResult = fruitService.searchByColor("red");
-        Assertions.assertFalse(searchResult.isEmpty());
-        Fruit fruitFounded = searchResult.stream().findFirst().orElse(Fruit.builder().build());
-        Assertions.assertEquals(fruitFounded.color, "red");
-        Assertions.assertEquals(fruitFounded.name, "strawberry");
+    @Throws(IOException::class)
+    fun testSearch() {
+        val id = UUID.randomUUID().toString()
+        val fruit = Fruit(id, "strawberry", "red")
+        fruitService.index(fruit)
+        val searchResult = fruitService.searchByColor("red")
+        assertFalse(searchResult.isEmpty())
+        val fruitFounded = searchResult.stream().findFirst().orElse(Fruit())
+        assertEquals(fruitFounded.color, "red")
+        assertEquals(fruitFounded.name, "strawberry")
     }
 }
